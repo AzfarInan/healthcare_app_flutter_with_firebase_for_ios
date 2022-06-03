@@ -200,6 +200,31 @@ class _HomePageState extends State<HomePage> {
     }).toList());
   }
 
+  TextButton noButton(BuildContext context){
+    return TextButton(onPressed: (){
+      Navigator.of(context).pop();
+    }, child: const Text("No"));
+  }
+
+  TextButton yesButton(BuildContext context){
+    return TextButton(onPressed: () async {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }, child: const Text("Yes"));
+  }
+
+  Widget logoutAlert(BuildContext context) {
+    return AlertDialog(
+      title: Text("Logout"),
+      content: Text("Are you sure you want to logout?"),
+      actions: [
+        noButton(context),
+        yesButton(context)
+      ],
+    );
+  }
+
   Widget _doctorTile(DoctorModel model) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -294,8 +319,9 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pop(context);
+                showDialog(context: context, builder: (BuildContext ctx) {
+                  return logoutAlert(ctx);
+                });
                 print("Back pressed");
               },
               icon: const Icon(
